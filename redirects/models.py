@@ -24,9 +24,22 @@ class Redirect(models.Model):
         else:
             return None
         
+    @property    
+    def get_redirect_db(self):
+        try:
+            redirect_obj = Redirect.objects.get(key=self.key, active=True)
+            return {
+                "key": redirect_obj.key,
+                "url": redirect_obj.url,
+                "location":"database"
+            }
+        except Redirect.DoesNotExist:
+            return None
+        
 def receiver(sender, instance:Redirect, **kwargs):
     if instance.active:
         logger.info(f"instance create in active with key={instance.key}")
-        cache.set(instance.key, model_to_dict(instance))
+        # cache.set(instance.key, model_to_dict(instance))
+        cache.set(instance.key, {'key': instance.key, 'url': instance.url}) # Me parece mejor asi si solo necesito key y url
 
 post_save.connect(receiver, sender=Redirect)

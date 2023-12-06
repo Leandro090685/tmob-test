@@ -2,11 +2,11 @@ from django.test import TestCase
 from django.test import Client
 from .models import Redirect
 
-class YourTestClass(TestCase):
 
+class YourTestClass(TestCase):
     def setUp(self):
-        Redirect.objects.create(key=1, url="http://test_1.com", active=True)
-        Redirect.objects.create(key=2, url="http://test_3.com")
+        self.redirect_1 = Redirect.objects.create(key=1, url="http://test_1.com", active=True)
+        self.redirect_2 = Redirect.objects.create(key=2, url="http://test_3.com")
         
     #test del modelo
     def test_get_redirect_ok(self):
@@ -27,3 +27,14 @@ class YourTestClass(TestCase):
         c = Client()
         response = c.get("/redirect/2")
         self.assertEquals(response.status_code, 404)
+    
+    # test para get_redirect_db
+    def test_get_redirect_db(self):
+        result_1 = self.redirect_1.get_redirect_db
+        result_2 = self.redirect_2.get_redirect_db
+
+        # Verificar que los resultados son los esperados
+        self.assertIsNotNone(result_1)
+        self.assertEquals(result_1["key"], "1")
+        self.assertEquals(result_1["url"], "http://test_1.com")
+        self.assertEquals(result_1["location"], "database")

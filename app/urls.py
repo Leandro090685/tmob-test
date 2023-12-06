@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from redirects.views import redirect_view
+from redirects.views import redirect_view, redirect_view_db
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('redirect/<key>', redirect_view, name='redirect-view'),
+    path('redirect/db/<key>', redirect_view_db, name='redirect-view-db')
 ]
